@@ -1,7 +1,9 @@
 function New-StatUSBCommand {
     Param(
-        [System.Drawing.Color[]]$Color,
-        [timespan[]]$TransitionTime
+        [Parameter(Mandatory)]
+		[System.Drawing.Color[]]$Color,
+        [Parameter()]
+		[timespan[]]$TransitionTime
     )
     $CommandString = [system.collections.arraylist]::new()
     if ($Color.Count -ne 1) {
