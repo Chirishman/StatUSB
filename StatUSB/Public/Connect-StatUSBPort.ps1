@@ -12,7 +12,7 @@ function Connect-StatUSBPort {
     $USBComPorts = $AllSerial | ? {$FriendlyNames -match "\($_\)"}
 
     [System.IO.Ports.SerialPort[]]$Ports = $USBComPorts | % {
-        [System.IO.Ports.SerialPort]::new('COM5', 9600, 'None', 8, 'one')
+        [System.IO.Ports.SerialPort]::new($_, 9600, 'None', 8, 'one')
     }
 
     $Ports | % {$_.Open()}
