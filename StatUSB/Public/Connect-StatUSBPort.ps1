@@ -15,7 +15,14 @@ function Connect-StatUSBPort {
         [System.IO.Ports.SerialPort]::new($_, 9600, 'None', 8, 'one')
     }
 
-    $Ports | % {$_.Open()}
-
-    $Global:SerialConnections = $Ports | Select @{N = 'PortName'; E = {$_.PortName}}, @{N = 'UUID'; E = {<#$_.WriteLine('?'); start-sleep -Seconds 2; [void]$_.ReadLine(); $_.ReadExisting()#>}}, @{N = 'Port'; E = {$_}}
+    $Global:SerialConnections = (
+		$Ports | % {
+			try {
+				$_.Open()
+			} catch {}
+			if ($_.IsOpen){
+				$_
+			}
+		}
+	) | Select @{N = 'PortName'; E = {$_.PortName}}, @{N = 'UUID'; E = {<#$_.WriteLine('?'); start-sleep -Seconds 2; [void]$_.ReadLine(); $_.ReadExisting()#>}}, @{N = 'Port'; E = {$_}}
 }
