@@ -1,6 +1,6 @@
 function Connect-StatUSBPort {
-    Param()
-
+    [CmdletBinding()]
+	Param()
     if ($Global:SerialConnections) {
         Disconnect-NotifierPorts
     }
