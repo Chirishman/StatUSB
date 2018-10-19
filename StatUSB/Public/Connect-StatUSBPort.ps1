@@ -1,14 +1,21 @@
 function Connect-StatUSBPort {
     [CmdletBinding()]
-	Param()
+    Param()
     if ($Global:SerialConnections) {
-        Disconnect-NotifierPorts
+        Disconnect-StatUSBPort
     }
+   
+    $VendorInfo = @{
+        VID = '2047'
+        PID = '03DF'
+    }
+    
+    $TargetDeviceInfo = ("^USB\\VID_{0}&PID_{1}\\" -f $VendorInfo.VID, $VendorInfo.PID)
 
     #Get Com Ports
     $AllSerial = [System.IO.Ports.SerialPort]::getportnames() | select -Unique
-    $RemoveNonUSBSerial = Get-PnpDevice -FriendlyName '* (COM*' -Class 'Ports' | ? {$_.DeviceID -notmatch '^BTHENUM'}
-    $FriendlyNames = ($RemoveNonUSBSerial.FriendlyName) -join '|'
+    $RemoveNonUSBNonStatUSBSerial = Get-PnpDevice -FriendlyName '* (COM*' -Class 'Ports' | ? {$_.DeviceID -notmatch '^BTHENUM' -and $_.DeviceID -match $TargetDeviceInfo }
+    $FriendlyNames = ($RemoveNonUSBNonStatUSBSerial.FriendlyName) -join '|'
     $USBComPorts = $AllSerial | ? {$FriendlyNames -match "\($_\)"}
 
     [System.IO.Ports.SerialPort[]]$Ports = $USBComPorts | % {
@@ -16,13 +23,13 @@ function Connect-StatUSBPort {
     }
 
     $Global:SerialConnections = (
-		$Ports | % {
-			try {
-				$_.Open()
-			} catch {}
-			if ($_.IsOpen){
-				$_
-			}
-		}
-	) | Select @{N = 'PortName'; E = {$_.PortName}}, @{N = 'UUID'; E = {<#$_.WriteLine('?'); start-sleep -Seconds 2; [void]$_.ReadLine(); $_.ReadExisting()#>}}, @{N = 'Port'; E = {$_}}
+        $Ports | % {
+            try {
+                $_.Open()
+            } catch {}
+            if ($_.IsOpen) {
+                $_
+            }
+        }
+    ) | Select @{N = 'PortName'; E = {$_.PortName}}, @{N = 'UUID'; E = {$_.WriteLine('?'); start-sleep -Seconds 2; [void]$_.ReadLine(); $_.ReadExisting()}}, @{N = 'Port'; E = {$_}}
 }
