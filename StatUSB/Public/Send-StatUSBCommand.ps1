@@ -6,11 +6,11 @@ function Send-StatUSBCommand {
         [string]$TargetID
     )
 
-    $global:SerialConnections | ? {if($TargetID){$_.UUID -eq $TargetID}else{$true}} | % {
+    $global:SerialConnections | Where-Object {if ($TargetID) {$_.UUID -eq $TargetID}else {$true}} | ForEach-Object {
         $_.Port.WriteLine($Command)
-		$_.Port.BaseStream.Flush()
-		$_.Port.DiscardInBuffer()
-		$_.Port.DiscardOutBuffer()
-		[void]$_.Port.ReadExisting()
+        $_.Port.BaseStream.Flush()
+        $_.Port.DiscardInBuffer()
+        $_.Port.DiscardOutBuffer()
+        [void]$_.Port.ReadExisting()
     }
 }

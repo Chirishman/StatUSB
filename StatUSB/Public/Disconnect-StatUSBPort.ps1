@@ -1,4 +1,4 @@
 function Disconnect-StatUSBPort {
     Param()
-    $Global:SerialConnections | % {$_.Port.Close()}
+    $Global:SerialConnections | ForEach-Object {$_.Port.Close()}
 }
