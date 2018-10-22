@@ -1,4 +1,5 @@
 # StatUSB
+
 Module for interacting with Fit-StatUSB devices
 
 ## Usage Examples
@@ -14,6 +15,7 @@ Send-StatUSBCommand -Command $Command
 ```
 
 ### Color Pattern with Custom Transition Durations
+
 ```PowerShell
 Connect-StatUSBPort
 
